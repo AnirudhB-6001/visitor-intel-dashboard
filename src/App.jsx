@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import TableView from "./components/TableView";
-import GraphView from "./components/GraphView";
-import InsightsView from "./components/InsightsView";
+import Dashboard from "./views/Dashboard";
 
 function App() {
   const [data, setData] = useState([]);
@@ -13,7 +11,7 @@ function App() {
         const [visitsRes, eventsRes, derivedRes] = await Promise.all([
           fetch("https://visitor-intel-api.onrender.com/dashboard/visits"),
           fetch("https://visitor-intel-api.onrender.com/dashboard/events"),
-          fetch("https://visitor-intel-api.onrender.com/dashboard/derived")
+          fetch("https://visitor-intel-api.onrender.com/dashboard/derived"),
         ]);
 
         const visits = await visitsRes.json();
@@ -38,7 +36,7 @@ function App() {
             derived_entry_page: matchedDerived?.entry_page || "",
             derived_bounced: matchedDerived?.bounced || "",
             derived_geo_region_type: matchedDerived?.geo_region_type || "",
-            derived_landing_source: matchedDerived?.landing_source || ""
+            derived_landing_source: matchedDerived?.landing_source || "",
           };
         });
 
@@ -53,36 +51,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4">
-      <div className="flex justify-center gap-4 mb-6">
-        <button
-          onClick={() => setActiveTab("table")}
-          className={`px-4 py-2 rounded font-medium ${
-            activeTab === "table" ? "bg-blue-600" : "bg-slate-700 hover:bg-slate-600"
-          }`}
-        >
-          Table View
-        </button>
-        <button
-          onClick={() => setActiveTab("graph")}
-          className={`px-4 py-2 rounded font-medium ${
-            activeTab === "graph" ? "bg-blue-600" : "bg-slate-700 hover:bg-slate-600"
-          }`}
-        >
-          Graph View
-        </button>
-        <button
-          onClick={() => setActiveTab("insights")}
-          className={`px-4 py-2 rounded font-medium ${
-            activeTab === "insights" ? "bg-blue-600" : "bg-slate-700 hover:bg-slate-600"
-          }`}
-        >
-          Insights View
-        </button>
-      </div>
-
-      {activeTab === "table" && <TableView data={data} />}
-      {activeTab === "graph" && <GraphView data={data} />}
-      {activeTab === "insights" && <InsightsView data={data} />}
+      <Dashboard data={data} activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
   );
 }
