@@ -42,7 +42,7 @@ function TableView({ data }) {
   const topCountry = [...new Set(data.map((d) => d.country))][0] || "-";
 
   return (
-    <div className="overflow-x-auto p-4 border border-slate-700 rounded-2xl shadow-xl bg-gray-950 space-y-4">
+    <div className="overflow-x-auto p-4 border border-slate-700 rounded-2xl shadow-xl bg-slate-900 space-y-4">
       {/* Summary Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 px-2">
         <h2 className="text-2xl font-bold text-white">🧾 Visitor Intelligence Table</h2>
@@ -66,13 +66,13 @@ function TableView({ data }) {
         <p className="text-center text-gray-400">No data available</p>
       ) : (
         <div className="overflow-auto rounded-md shadow-inner border border-slate-700">
-          <table className="min-w-full text-sm border-collapse">
+          <table className="table-fixed w-full text-sm border-collapse">
             <thead className="bg-slate-800 text-slate-100 sticky top-0 z-10">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className="px-4 py-3 border border-slate-700 font-semibold whitespace-nowrap"
+                    className="px-4 py-3 border border-slate-700 font-semibold text-left whitespace-nowrap"
                   >
                     {col.label}
                   </th>
@@ -84,13 +84,14 @@ function TableView({ data }) {
                 <tr
                   key={idx}
                   className={`${
-                    idx % 2 === 0 ? "bg-[#0d1b2a]" : "bg-[#1b263b]"
-                  } hover:bg-[#2a3d5c] transition-all border-b border-slate-700`}
+                    idx % 2 === 0 ? "bg-slate-900" : "bg-slate-800"
+                  } hover:bg-slate-700 transition-all border-b border-slate-700`}
                 >
                   {columns.map((col) => (
                     <td
                       key={col.key}
-                      className={`px-4 py-2 border-r border-slate-700 font-mono text-xs whitespace-nowrap ${
+                      title={row[col.key] || "-"}
+                      className={`px-4 py-2 border-r border-slate-700 font-mono text-xs whitespace-nowrap overflow-hidden text-ellipsis ${
                         col.key.includes("id") ? "text-slate-400" :
                         col.key.includes("bounced") ? "text-red-400" :
                         col.key.includes("country") ? "text-green-300" :
@@ -98,7 +99,9 @@ function TableView({ data }) {
                         "text-gray-200"
                       }`}
                     >
-                      {row[col.key] || "-"}
+                      {row[col.key]?.length > 30
+                        ? `${row[col.key].slice(0, 30)}...`
+                        : row[col.key] || "-"}
                     </td>
                   ))}
                 </tr>
