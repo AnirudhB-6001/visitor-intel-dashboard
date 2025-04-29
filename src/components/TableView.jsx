@@ -1,4 +1,4 @@
-// TableView.jsx — TanStack Table v8 with Visitor Alias and Session Label (localStorage)
+// TableView.jsx — Cleaned, Fixed Layout, No Double MiniInsights
 
 import React, { useState, useMemo } from "react";
 import {
@@ -39,7 +39,6 @@ const formatTimestamp = (timestamp) => {
 function TableView({ data }) {
   const [columnFilters, setColumnFilters] = useState([]);
 
-  // LocalStorage Alias Maps
   const visitorAliasMap = useMemo(() => {
     const stored = JSON.parse(localStorage.getItem("visitorAliasMap")) || {};
     let counter = Object.keys(stored).length;
@@ -66,13 +65,13 @@ function TableView({ data }) {
     return stored;
   }, [data]);
 
-  const enhancedData = useMemo(() => {
-    return data.map(row => ({
+  const enhancedData = useMemo(() =>
+    data.map(row => ({
       ...row,
       visitor_alias: visitorAliasMap[row.fingerprint_id] || "-",
       session_label: sessionAliasMap[row.session_id] || "-",
-    }));
-  }, [data, visitorAliasMap, sessionAliasMap]);
+    })),
+  [data, visitorAliasMap, sessionAliasMap]);
 
   const uniqueValues = useMemo(() => {
     const values = {};
@@ -88,7 +87,7 @@ function TableView({ data }) {
   }, [enhancedData]);
 
   const columnKeys = [
-    "visitor_alias", "session_label", // new derived fields
+    "visitor_alias", "session_label",
     "id", "timestamp", "page", "referrer", "device", "session_id", "fingerprint_id", "ip_address",
     "city", "region", "country", "organization", "utm_source", "utm_medium", "utm_campaign",
     "utm_term", "utm_content", "event_type", "event_data", "event_page", "derived_visit_type",
@@ -132,9 +131,7 @@ function TableView({ data }) {
   const table = useReactTable({
     data: enhancedData,
     columns,
-    state: {
-      columnFilters,
-    },
+    state: { columnFilters },
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -142,61 +139,58 @@ function TableView({ data }) {
 
   const exportCSV = () => {
     if (!enhancedData.length) return;
-  
     const headerKeys = Object.keys(enhancedData[0]);
-    const headers = headerKeys.map((key) =>
-      key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
-    );
-  
+    const headers = headerKeys.map((key) => key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
     const rows = enhancedData.map((row) =>
       headerKeys.map((key) => `"${row[key] ?? ""}"`).join(",")
     );
-  
     const csvContent = [headers.join(","), ...rows].join("\n");
-  
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "visitor_logs_full.csv");
-  };  
+  };
 
   return (
-    <div className="overflow-x-auto p-4 border border-slate-700 rounded-2xl shadow-xl bg-slate-900 space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-4 px-2">
-        <h2 className="text-2xl font-bold text-white">🧾 Visitor Intelligence Table</h2>
-        <button onClick={exportCSV} className="btn btn-accent">Export CSV</button>
-      </div>
+    <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="overflow-x-auto border border-slate-700 rounded-2xl shadow-xl bg-slate-900 space-y-6">
+        {/* Header and Export */}
+        <div className="flex flex-wrap items-center justify-between gap-4 px-6 pt-6">
+          <h2 className="text-2xl font-bold text-white">🧾 Visitor Intelligence Table</h2>
+          <button onClick={exportCSV} className="btn btn-accent">Export CSV</button>
+        </div>
 
-      {/* Table */}
-      <div className="overflow-auto rounded-md shadow-inner border border-slate-700">
-        <table className="table table-auto w-auto text-sm border-collapse">
-          <thead className="bg-base-200 text-base-content">
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <th
-                    key={header.id}
-                    className={`py-3 border border-slate-700 font-semibold text-left whitespace-nowrap align-top ${header.column.id === "id" ? "pl-16 pr-4" : "px-4"}`}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map(row => (
-              <tr key={row.id} className="hover:bg-slate-700 transition-all border-b border-slate-700">
-                {row.getVisibleCells().map(cell => (
-                  <td
-                    key={cell.id}
-                    className={`py-2 border-r border-slate-700 font-mono text-xs whitespace-nowrap min-w-[10rem] ${cell.column.id === "id" ? "pl-16 pr-4" : "px-4"}`}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {/* Table */}
+        <div className="overflow-auto rounded-md shadow-inner border border-slate-700 px-2 pb-6">
+          <table className="table table-auto w-auto text-sm border-collapse">
+            <thead className="bg-base-200 text-base-content">
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <th
+                      key={header.id}
+                      className={`py-3 border border-slate-700 font-semibold text-left whitespace-nowrap align-top ${header.column.id === "id" ? "pl-16 pr-4" : "px-4"}`}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map(row => (
+                <tr key={row.id} className="hover:bg-slate-700 transition-all border-b border-slate-700">
+                  {row.getVisibleCells().map(cell => (
+                    <td
+                      key={cell.id}
+                      className={`py-2 border-r border-slate-700 font-mono text-xs whitespace-nowrap min-w-[12rem] ${cell.column.id === "id" ? "pl-16 pr-4" : "px-4"}`}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
