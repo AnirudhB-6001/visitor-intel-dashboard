@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 export default {
   content: [
     "./index.html",
@@ -7,5 +7,8 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [],
-};
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["dark"], // Optional: We can tweak later if needed
+  },
+}

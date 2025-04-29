@@ -1,40 +1,44 @@
+// src/views/RecruiterPage.jsx
 import React from "react";
-import RecruiterInsightsView from "../components/RecruiterInsightsView";
+import Layout from "../components/Layout";
+import RecruiterInsightsGrid from "../components/RecruiterInsightsGrid";
 import UTMBuilderPanel from "../components/UTMBuilderPanel";
 import UTMSourcesPieChart from "../components/recruiter/UTMSourcesPieChart";
-import RecruiterTrafficLineChart from "../components/recruiter/RecruiterTrafficLineChart"; // ✅ Corrected name
+import RecruiterTrafficLineChart from "../components/recruiter/RecruiterTrafficLineChart";
 
 function RecruiterPage({ data }) {
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <h2 className="text-3xl font-bold text-center text-blue-400">🎯 Recruiter Intelligence</h2>
+    <Layout>
+      <div className="card bg-base-200 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title text-center text-primary">🎯 Recruiter Intelligence</h2>
+          <RecruiterInsightsGrid data={data} />
+        </div>
+      </div>
 
-      {/* Key Insights + UTM Builder */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-slate-800 p-5 rounded-2xl shadow-md">
-          <h3 className="text-lg font-semibold mb-4">🔍 Recruiter Key Insights</h3>
-          <RecruiterInsightsView data={data} />
+        <div className="card bg-base-200 shadow-xl">
+          <div className="card-body">
+            <h3 className="card-title text-center text-secondary">📊 Top UTM Sources</h3>
+            <UTMSourcesPieChart data={data} />
+          </div>
         </div>
 
-        <div className="bg-slate-800 p-5 rounded-2xl shadow-md">
-          <h3 className="text-lg font-semibold mb-4">🎯 UTM Link Builder</h3>
+        <div className="card bg-base-200 shadow-xl">
+          <div className="card-body">
+            <h3 className="card-title text-center text-accent">📈 Recruiter Traffic Over Time</h3>
+            <RecruiterTrafficLineChart data={data} />
+          </div>
+        </div>
+      </div>
+
+      <div className="card bg-base-200 shadow-xl mt-6">
+        <div className="card-body">
+          <h3 className="card-title text-center text-primary">🎯 UTM Link Builder</h3>
           <UTMBuilderPanel />
         </div>
       </div>
-
-      {/* Graphs Section */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-slate-800 p-5 rounded-2xl shadow-md">
-          <h3 className="text-lg font-semibold mb-4">Top UTM Sources</h3>
-          <UTMSourcesPieChart data={data} />
-        </div>
-
-        <div className="bg-slate-800 p-5 rounded-2xl shadow-md">
-          <h3 className="text-lg font-semibold mb-4">Recruiter Traffic Over Time</h3>
-          <RecruiterTrafficLineChart data={data} />
-        </div>
-      </div>
-    </div>
+    </Layout>
   );
 }
 
