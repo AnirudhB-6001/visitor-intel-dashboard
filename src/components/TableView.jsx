@@ -141,12 +141,22 @@ function TableView({ data }) {
   });
 
   const exportCSV = () => {
-    const header = Object.keys(data[0] || {}).join(",");
-    const rows = data.map((row) => Object.values(row).join(","));
-    const csvContent = [header, ...rows].join("\n");
+    if (!enhancedData.length) return;
+  
+    const headerKeys = Object.keys(enhancedData[0]);
+    const headers = headerKeys.map((key) =>
+      key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    );
+  
+    const rows = enhancedData.map((row) =>
+      headerKeys.map((key) => `"${row[key] ?? ""}"`).join(",")
+    );
+  
+    const csvContent = [headers.join(","), ...rows].join("\n");
+  
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, "visitor_logs.csv");
-  };
+    saveAs(blob, "visitor_logs_full.csv");
+  };  
 
   return (
     <div className="overflow-x-auto p-4 border border-slate-700 rounded-2xl shadow-xl bg-slate-900 space-y-4">
