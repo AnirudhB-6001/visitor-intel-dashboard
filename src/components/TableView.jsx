@@ -21,7 +21,7 @@ const formatDuration = (seconds) => {
 
 const formatTimestamp = (timestamp) => {
   try {
-    const date = new Date(timestamp);
+    const utcDate = new Date(timestamp + "Z"); // Force UTC by adding "Z" if missing
     return new Intl.DateTimeFormat("en-IN", {
       weekday: "short",
       day: "numeric",
@@ -29,8 +29,8 @@ const formatTimestamp = (timestamp) => {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
-      timeZone: "Asia/Kolkata",
-    }).format(date);
+      timeZone: "Asia/Kolkata", // Then shift to IST
+    }).format(utcDate);
   } catch {
     return "-";
   }
